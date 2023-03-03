@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "homework-webpython-07"
+version = "0.1.0"
+description = ""
+authors = ["Андрій <andrey.maybrodskyy@gmail.com>"]
+readme = "README.md"
+packages = [{include = "homework_webpython_07"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+sqlalchemy = "^2.0.4"
+alembic = "^1.9.4"
+faker = "^17.3.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
