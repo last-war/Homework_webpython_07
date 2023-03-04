@@ -9,8 +9,9 @@ packages = [{include = "homework_webpython_07"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 sqlalchemy = "^2.0.4"
-alembic = "^1.9.4"
 faker = "^17.3.0"
+alembic = "^1.9.4"
+psycopg2-binary = "^2.9.5"
 
 
 [build-system]

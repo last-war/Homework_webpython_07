@@ -1,8 +1,10 @@
 import argparse
 
+from seed import fill_db
+
 """
-py main.py --action -a CRUD-action
-py main.py --model -m use table 
+py main.py --action -a CRUD-action or fake
+py main.py --model -m use table or fake
 py main.py --data -d data with _ as separete
 """
 
@@ -13,12 +15,14 @@ parser.add_argument('-m', '--model', required=True)
 parser.add_argument('-d', '--data', required=True)
 
 
-
 def do_action(arg):
     action = arg.get('action')
-    base_name = arg.get('model')
+    tabl_name = arg.get('model')
+    raw_data = arg.get('data')
 
     match action:
+        case 'fake':
+            fill_db()
         case 'create':
             pass
         case 'read':
@@ -27,7 +31,6 @@ def do_action(arg):
             pass
         case 'delete':
             pass
-
 
 
 if __name__ == "__main__":
