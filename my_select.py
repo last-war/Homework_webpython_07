@@ -140,7 +140,7 @@ def select_8(teacher_id: int):
     GROUP BY j.subject_id, sub.sub_name
     ORDER BY sub.sub_name;
     """
-    subquery = (select(Subject.id).where(Subject.teacher_id == teacher_id).subquery())
+    subquery = (select(Subject.id).where(Subject.teacher_id == teacher_id).scalar_subquery())
     rez = session.query(Subject.sub_name, func.round(func.avg(Journal.mark), 2).label('av_mark')) \
         .select_from(Journal).join(Subject).filter(Journal.subject_id.in_(subquery)) \
         .group_by(Journal.subject_id, Subject.sub_name).order_by(Subject.sub_name).all()
@@ -177,7 +177,7 @@ def select_10(student_id: int, teacher_id: int):
     where j.subject_id IN (SELECT id FROM subjects WHERE teacher_id = 2) AND j.student_id = 17
     GROUP BY sub.sub_name;
     """
-    subquery = (select(Subject.id).where(Subject.teacher_id == teacher_id).subquery())
+    subquery = (select(Subject.id).where(Subject.teacher_id == teacher_id).scalar_subquery())
     rez = session.query(Subject.sub_name).select_from(Journal).join(Subject) \
         .filter(and_(Journal.subject_id.in_(subquery), Journal.student_id == student_id)) \
         .group_by(Subject.sub_name).all()
@@ -196,7 +196,7 @@ def select_11(student_id: int, teacher_id: int):
     where j.subject_id IN (SELECT id FROM subjects WHERE teacher_id = 2) AND j.student_id = 17
     GROUP BY sub.sub_name;
     """
-    subquery = (select(Subject.id).where(Subject.teacher_id == teacher_id).subquery())
+    subquery = (select(Subject.id).where(Subject.teacher_id == teacher_id).scalar_subquery())
     rez = session.query(Subject.sub_name, func.round(func.avg(Journal.mark), 2).label('av_mark')) \
         .select_from(Journal).join(Subject) \
         .filter(and_(Journal.subject_id.in_(subquery), Journal.student_id == student_id)) \
@@ -204,7 +204,7 @@ def select_11(student_id: int, teacher_id: int):
     return rez
 
 
-def select_12():
+def select_12(group_id: int, subject_id: int):
     """
 
     SELECT
@@ -222,3 +222,12 @@ def select_12():
         AND j.created_at IN (SELECT MAX(created_at) FROM journal)
     ORDER BY created_at DESC;
     """
+    subquery_stud = (select(Student.id).where(Student.group_id == group_id).scalar_subquery())
+    subquery_dat = (select(Journal.created_at).where(Journal.subject_id == subject_id) \
+                    .order_by(desc(Journal.created_at)).limit(1).scalar_subquery())
+    rez = session.query(Student.full_name, Subject.sub_name, Journal.mark, Journal.created_at) \
+        .select_from(Journal).join(Subject).join(Student) \
+        .filter(and_(Journal.created_at.in_(subquery_dat), Journal.subject_id == subject_id, \
+                Journal.student_id.in_(subquery_stud))) \
+        .all()
+    return rez
